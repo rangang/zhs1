@@ -81,7 +81,7 @@ autoUpdater.on('error', (error) => {
     .showMessageBox(mainWindow, {
       type: 'info',
       title: '错误提示',
-      message: `错误提示！！！`
+      message: `错误提示！！！${error}`
     });
 });
 
