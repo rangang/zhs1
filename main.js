@@ -15,6 +15,9 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
 
+  // 打开开发者工具
+  mainWindow.webContents.openDevTools();
+
   const currentVersion = app.getVersion();
   dialog
     .showMessageBox(mainWindow, {
@@ -25,10 +28,12 @@ function createWindow() {
 
   // 启动时检查更新
   autoUpdater.checkForUpdates();
+
 }
 
 // 处理更新事件
 autoUpdater.on('update-available', (info) => {
+  console.log('更新可用:', info); // 输出更新信息
   const updateVersion = info.version;
 
   // 弹窗提示用户
@@ -45,6 +50,8 @@ autoUpdater.on('update-available', (info) => {
 });
 
 autoUpdater.on('update-downloaded', () => {
+  console.log('更新已下载'); // 添加日志
+  // 弹窗提示用户更新已下载
   dialog
     .showMessageBox(mainWindow, {
       type: 'info',
@@ -58,12 +65,23 @@ autoUpdater.on('update-downloaded', () => {
 
 // 提示当前版本号
 autoUpdater.on('update-not-available', () => {
+  console.log('没有可用的更新'); // 添加日志
   const currentVersion = app.getVersion();
   dialog
     .showMessageBox(mainWindow, {
       type: 'info',
       title: '没有更新',
       message: `当前版本是 ${currentVersion}，没有新版本可用。`
+    });
+});
+
+autoUpdater.on('error', (error) => {
+  console.log('更新错误:', error); // 输出更新错误
+  dialog
+    .showMessageBox(mainWindow, {
+      type: 'info',
+      title: '错误提示',
+      message: `错误提示！！！`
     });
 });
 

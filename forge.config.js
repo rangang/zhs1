@@ -57,4 +57,14 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  build: {
+    appId: 'com.zhskg.zhstest',
+    publish: [
+      {
+        provider: 'github',
+        owner: 'rangang',
+        repo: 'zhs1',
+      },
+    ],
+  },
 };
