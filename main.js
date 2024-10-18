@@ -1,5 +1,10 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
+autoUpdater.setFeedURL({
+  provider: 'github',
+  owner: 'rangang',
+  repo: 'zhs1'
+});
 
 const log = require('electron-log');
 
