@@ -35,13 +35,7 @@ module.exports = {
       config: {
         arch: ['arm64'],
       },
-    },
-    {
-      name: '@electron-forge/maker-appimage',
-      config: {
-        arch: ['arm64'],
-      },
-    },
+    }
   ],
   plugins: [
     {
