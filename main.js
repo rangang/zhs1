@@ -1,14 +1,12 @@
 const { app, BrowserWindow, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
-autoUpdater.setFeedURL({
-  provider: 'github',
-  owner: 'rangang',
-  repo: 'zhs1',
-  releaseType: 'release'  // 或 "draft"
-});
+const log = require('electron-log');
 
-autoUpdater.checkForUpdates();
+// 配置日志记录
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 let mainWindow;
 
@@ -36,9 +34,44 @@ function createWindow() {
     });
 
   // 启动时检查更新
-  // autoUpdater.checkForUpdates();
+  autoUpdater.checkForUpdatesAndNotify();
 
 }
+
+// 处理更新事件
+autoUpdater.on('update-available', (info) => {
+  dialog.showMessageBox(mainWindow, {
+    type: 'info',
+    title: '有新版本可用',
+    message: `新版本 ${info.version} 已发布，是否下载并安装？`,
+    buttons: ['是', '否'],
+  }).then((result) => {
+    if (result.response === 0) { // 用户选择 "是"
+      autoUpdater.downloadUpdate();
+    }
+  });
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  dialog.showMessageBox(mainWindow, {
+    type: 'info',
+    title: '没有新版本',
+    message: `当前版本 ${app.getVersion()} 已是最新。`,
+  });
+});
+
+autoUpdater.on('update-downloaded', () => {
+  dialog.showMessageBox(mainWindow, {
+    type: 'info',
+    title: '安装更新',
+    message: '更新下载完成，是否现在重启应用安装更新？',
+    buttons: ['是', '稍后'],
+  }).then((result) => {
+    if (result.response === 0) { // 用户选择 "是"
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
 
 // // 处理更新事件
 // autoUpdater.on('update-available', (info) => {
