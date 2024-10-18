@@ -1,12 +1,6 @@
 const { app, BrowserWindow, dialog } = require('electron');
-const { updateElectronApp } = require('update-electron-app')
-updateElectronApp({
-  updateSource: {
-    repo: 'https://github.com/rangang/zhs1'
-  },
-  updateInterval: '20 minutes',
-  logger: require('electron-log')
-})
+const { updateElectronApp } = require('update-electron-app');
+updateElectronApp(); // additional configuration options available
 
 let mainWindow;
 

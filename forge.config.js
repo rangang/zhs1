@@ -4,8 +4,8 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
-    arch: 'arm64',
-    platform: 'linux'
+    platform: ['darwin', 'linux'],
+    arch: ['x64', 'arm64'], 
   },
   rebuildConfig: {},
   publishers: [
@@ -29,17 +29,18 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
-      config: {
-        arch: ['x64']
-      }
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        arch: ['arm64'],
+      },
     },
     {
-      name: '@electron-forge/maker-rpm',
-      config: {},
+      name: '@electron-forge/maker-appimage',
+      config: {
+        arch: ['arm64'],
+      },
     },
   ],
   plugins: [
