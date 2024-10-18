@@ -1,6 +1,14 @@
 const { app, BrowserWindow, dialog } = require('electron');
-const { updateElectronApp } = require('update-electron-app');
-updateElectronApp(); // additional configuration options available
+const { autoUpdater } = require('electron-updater');
+
+autoUpdater.setFeedURL({
+  provider: 'github',
+  owner: 'rangang',
+  repo: 'zhs1',
+  releaseType: 'release'  // 或 "draft"
+});
+
+autoUpdater.checkForUpdates();
 
 let mainWindow;
 
