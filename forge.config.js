@@ -60,6 +60,9 @@ module.exports = {
   ],
   build: {
     appId: 'com.zhskg.zhstest',
+    win: {
+      target: 'nsis'
+    },
     publish: [
       {
         provider: 'github',
@@ -67,5 +70,9 @@ module.exports = {
         repo: 'zhs1',
       },
     ],
+    nsis: {
+      oneClick: false,
+      allowToChangeInstallationDirectory: true
+    }
   },
 };
