@@ -24,16 +24,10 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Install Snapcraft
-      if: matrix.os == 'ubuntu-latest'
-      run: sudo snap install snapcraft --classic
-
     - name: Make the app
       run: npm run make
-      env:
-        ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
 
     - name: Publish the app
-      run: npx electron-builder --publish always
+      run: npm run publish
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

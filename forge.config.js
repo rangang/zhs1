@@ -29,15 +29,11 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
-      config: {
-        arch: 'x64',
-      }
     },
     {
       name: '@electron-forge/maker-deb',
-      platforms: ['linux'],
       config: {
-        arch: 'arm64',
+        arch: ['arm64'],
       },
     }
   ],
@@ -60,9 +56,6 @@ module.exports = {
   ],
   build: {
     appId: 'com.zhskg.zhstest',
-    win: {
-      target: 'nsis'
-    },
     publish: [
       {
         provider: 'github',
@@ -70,9 +63,5 @@ module.exports = {
         repo: 'zhs1',
       },
     ],
-    nsis: {
-      oneClick: false,
-      allowToChangeInstallationDirectory: true
-    }
   },
 };
