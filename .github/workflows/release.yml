@@ -24,10 +24,33 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Cache Electron builder cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/electron
+          ~/.cache/electron-builder
+        key: ${{ runner.os }}-electron-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-electron-
+
+    - name: Build the app
+      run: npm run build
+
     - name: Make the app
       run: npm run make
 
     - name: Publish the app
       run: npm run publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/**/*.dmg
+          dist/**/*.AppImage
+          dist/**/*.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

@@ -1,14 +1,12 @@
-const { app, BrowserWindow, autoUpdater, dialog } = require('electron');
-// const { updateElectronApp } = require('update-electron-app');
-// updateElectronApp(); // additional configuration options available
-
+const { app, BrowserWindow, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 
-// 配置日志记录
+// 设置日志记录
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
 
+// 主窗口
 let mainWindow;
 
 function createWindow() {
@@ -17,52 +15,63 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
-    }
+    },
   });
 
   mainWindow.loadFile('index.html');
 
-  // 打开开发者工具
-  mainWindow.webContents.openDevTools();
-
-  const currentVersion = app.getVersion();
-  dialog
-    .showMessageBox(mainWindow, {
-      type: 'info',
-      title: '第一次弹窗提示',
-      message: `提示1:当前版本是 ${currentVersion}，没有新版本可用。`
-    });
-
-    setInterval(() => {
-      log.info('checkForUpdates...');
-      autoUpdater.checkForUpdates()
-    }, 60000)
-
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-  log.info('update-downloaded...');
-  const dialogOpts = {
-    type: 'info',
-    buttons: ['Restart', 'Later'],
-    title: 'Application Update',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail:
-      'A new version has been downloaded. Starta om applikationen för att verkställa uppdateringarna.'
-  }
+app.on('ready', () => {
+  createWindow();
+  checkForUpdates();
+});
 
-  dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    if (returnValue.response === 0) autoUpdater.quitAndInstall()
-  })
-})
-autoUpdater.on('error', (message) => {
-  log.info('error：', message);
-  console.error('There was a problem updating the application')
-  console.error(message)
-})
+// 检查更新
+function checkForUpdates() {
+  autoUpdater.checkForUpdatesAndNotify();
 
-app.whenReady().then(createWindow);
+  autoUpdater.on('update-available', (info) => {
+    dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: '更新可用',
+      message: `新版本可用: ${info.version}。应用将下载并安装更新。`,
+    });
+  });
+
+  autoUpdater.on('update-not-available', () => {
+    const currentVersion = app.getVersion();
+    dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: '没有更新',
+      message: `当前版本是 ${currentVersion}，没有新版本可用。`,
+    });
+  });
+
+  autoUpdater.on('error', (error) => {
+    dialog.showErrorBox('更新错误', error == null ? '未知' : error.toString());
+  });
+
+  autoUpdater.on('download-progress', (progress) => {
+    let logMessage = `下载速度: ${progress.bytesPerSecond} - 已下载 ${progress.percent}% (${progress.transferred}/${progress.total})`;
+    log.info(logMessage);
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    dialog
+      .showMessageBox(mainWindow, {
+        type: 'info',
+        title: '更新可用',
+        message: '更新已下载，应用将重启并安装更新。',
+      })
+      .then(() => {
+        autoUpdater.quitAndInstall();
+      });
+  });
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
