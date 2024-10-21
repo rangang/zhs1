@@ -26,6 +26,8 @@ jobs:
 
     - name: Build the app
       run: npm run build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
     - name: Make the app
       run: npm run make
