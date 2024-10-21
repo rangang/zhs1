@@ -24,16 +24,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Cache Electron builder cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cache/electron
-          ~/.cache/electron-builder
-        key: ${{ runner.os }}-electron-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-electron-
-
     - name: Build the app
       run: npm run build
 
